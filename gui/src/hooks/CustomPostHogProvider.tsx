@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
 const CustomPostHogProvider = ({ children }: PropsWithChildren) => {
-  const allowAnonymousTelemetry = useSelector(
-    (store: RootState) => store?.state?.config.allowAnonymousTelemetry,
-  );
+  // const allowAnonymousTelemetry = useSelector(
+  //   (store: RootState) => store?.state?.config.allowAnonymousTelemetry,
+  // );
+  const allowAnonymousTelemetry = false;
 
   const [client, setClient] = React.useState<any>(undefined);
 

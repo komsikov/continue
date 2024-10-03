@@ -31,6 +31,81 @@ export interface ModelPackage {
 }
 
 export const models: { [key: string]: ModelPackage } = {
+  gigaChat: {
+    title: "GigaChat",
+    description:
+      "An even faster version of GigaChat.",
+    params: {
+      model: "GigaChat",
+      contextLength: 128_000,
+      title: "GigaChat",
+      systemMessage:
+        "You are an expert software developer. You give helpful and concise responses.",
+    },
+    providerOptions: ["giga"],
+    icon: "giga.png",
+    isOpenSource: false,
+  },
+  gigaChatPlus: {
+    title: "GigaChat-Plus",
+    description:
+      "An even faster version of GigaChat.",
+    params: {
+      model: "GigaChat-Plus",
+      contextLength: 128_000,
+      title: "GigaChat",
+      systemMessage:
+        "You are an expert software developer. You give helpful and concise responses.",
+    },
+    providerOptions: ["giga"],
+    icon: "giga.png",
+    isOpenSource: false,
+  },
+  gigaChatPro: {
+    title: "GigaChat-Pro",
+    description:
+      "An even faster version of GigaChat.",
+    params: {
+      model: "GigaChat-Pro",
+      contextLength: 128_000,
+      title: "GigaChat",
+      systemMessage:
+        "You are an expert software developer. You give helpful and concise responses.",
+    },
+    providerOptions: ["giga"],
+    icon: "giga.png",
+    isOpenSource: false,
+  },
+  yandexGpt: {
+    title: "yandexGpt",
+    description:
+      "An even best version of yandexGpt.",
+    params: {
+      model: "yandexgpt",
+      contextLength: 128_000,
+      title: "yandexGPT",
+      systemMessage:
+        "You are an expert software developer. You give helpful and concise responses.",
+    },
+    providerOptions: ["yandex"],
+    icon: "yandex.png",
+    isOpenSource: false,
+  },
+  yandexGptLite: {
+    title: "yandexGptLite",
+    description:
+      "An even faster version of yandexGpt.",
+    params: {
+      model: "yandexgpt-lite",
+      contextLength: 128_000,
+      title: "yandexGPT-lite",
+      systemMessage:
+        "You are an expert software developer. You give helpful and concise responses.",
+    },
+    providerOptions: ["yandex"],
+    icon: "yandex.png",
+    isOpenSource: false,
+  },
   llama31Chat: {
     title: "Llama3.1 Chat",
     description: "The latest model from Meta, fine-tuned for chat",

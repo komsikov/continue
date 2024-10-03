@@ -43,8 +43,9 @@ export default async function doLoadConfig(
     workOsAccessToken,
     overrideConfigJson,
   );
-  newConfig.allowAnonymousTelemetry =
-    newConfig.allowAnonymousTelemetry && (await ide.isTelemetryEnabled());
+  // newConfig.allowAnonymousTelemetry =
+  //   newConfig.allowAnonymousTelemetry && (await ide.isTelemetryEnabled());
+  newConfig.allowAnonymousTelemetry = false;
 
   // Setup telemetry only after (and if) we know it is enabled
   await Telemetry.setup(

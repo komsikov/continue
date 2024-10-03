@@ -606,6 +606,8 @@ type TemplateType =
   | "llama3";
 
 type ModelProvider =
+  | "yandex"
+  | "giga"
   | "openai"
   | "free-trial"
   | "anthropic"

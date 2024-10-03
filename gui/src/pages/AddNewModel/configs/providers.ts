@@ -51,6 +51,69 @@ export const apiBaseInput: InputDescriptor = {
 };
 
 export const providers: Partial<Record<ModelProvider, ProviderInfo>> = {
+  giga: {
+    title: "Giga",
+    provider: "giga",
+    description: "Use gigachat, or any other SberAI model",
+    longDescription:
+      "Use gpt-4, gpt-3.5-turbo, or any other OpenAI model. See [here](https://openai.com/product#made-for-developers) to obtain an API key.",
+    icon: "giga.png",
+    tags: [ModelProviderTags.RequiresApiKey],
+    packages: [
+      models.gigaChat,
+      models.gigaChatPlus,
+      models.gigaChatPro,
+      {
+        ...models.AUTODETECT,
+        params: {
+          ...models.AUTODETECT.params,
+          title: "Giga",
+        },
+      },
+    ],
+    collectInputFor: [
+      {
+        inputType: "text",
+        key: "apiKey",
+        label: "API Key",
+        placeholder: "Enter your Giga API key",
+        required: true,
+      },
+      ...completionParamsInputsConfigs,
+    ],
+    apiKeyUrl: "https://platform.openai.com/account/api-keys",
+  },
+  yandex: {
+    title: "Yandex",
+    provider: "yandex",
+    description: "Use YandexGPT, or any other Yandex model",
+    longDescription:
+      "Use gpt-4, gpt-3.5-turbo, or any other Yandex model. See [here](https://openai.com/product#made-for-developers) to obtain an API key.",
+    icon: "yandex.png",
+    tags: [ModelProviderTags.RequiresApiKey],
+    packages: [
+      models.yandexGpt,
+      models.yandexGptLite,
+      {
+        ...models.AUTODETECT,
+        params: {
+          ...models.AUTODETECT.params,
+          title: "Yandex",
+        },
+      },
+    ],
+    collectInputFor: [
+      {
+        inputType: "text",
+        key: "apiKey",
+        label: "API Key",
+        placeholder: "Enter your Yandex API key",
+        required: true,
+      },
+      ...completionParamsInputsConfigs,
+    ],
+    apiKeyUrl: "https://platform.openai.com/account/api-keys",
+  },
   openai: {
     title: "OpenAI",
     provider: "openai",

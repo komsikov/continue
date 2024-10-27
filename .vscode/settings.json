@@ -19,5 +19,8 @@
     "**/extensions/vscode/gui/**": true,
     "**/extensions/vscode/out/**": true
   },
-  "eslint.workingDirectories": ["./core"]
+  "eslint.workingDirectories": [
+    "./core"
+  ],
+  "java.compile.nullAnalysis.mode": "automatic"
 }

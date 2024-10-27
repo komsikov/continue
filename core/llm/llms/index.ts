@@ -19,6 +19,7 @@ import Fireworks from "./Fireworks";
 import Flowise from "./Flowise";
 import FreeTrial from "./FreeTrial";
 import Gemini from "./Gemini";
+import Giga from "./Giga";
 import Groq from "./Groq";
 import HuggingFaceInferenceAPI from "./HuggingFaceInferenceAPI";
 import HuggingFaceTGI from "./HuggingFaceTGI";
@@ -40,9 +41,12 @@ import TextGenWebUI from "./TextGenWebUI";
 import Together from "./Together";
 import Vllm from "./Vllm";
 import WatsonX from "./WatsonX";
+import Yandex from "./Yandex";
 import ContinueProxy from "./stubs/ContinueProxy";
 
 const LLMs = [
+  Giga,
+  Yandex,
   Anthropic,
   Cohere,
   FreeTrial,

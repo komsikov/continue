@@ -26,7 +26,7 @@ class Yandex extends BaseLLM {
     this.apiVersion = options.apiVersion ?? "2023-07-01-preview";
   }
 
-  static providerName: ModelProvider = "openai";
+  static providerName: ModelProvider = "yandex";
   static defaultOptions: Partial<LLMOptions> = {
     apiBase: "https://llm.api.cloud.yandex.net/foundationModels/v1/",
   };
@@ -65,12 +65,6 @@ class Yandex extends BaseLLM {
     return model;
   }
 
-  private isO1Model(model?: string): boolean {
-    return (
-      !!model && (model.startsWith("o1-preview") || model.startsWith("o1-mini"))
-    );
-  }
-
   protected _convertArgs(options: any, messages: ChatMessage[]) {
     const url = new URL(this.apiBase!);
     const finalOptions: any = {
@@ -95,21 +89,6 @@ class Yandex extends BaseLLM {
               ? options.stop?.slice(0, 4)
               : options.stop,
     };
-
-    // OpenAI o1-preview and o1-mini:
-    if (this.isO1Model(options.model)) {
-      // a) use max_completion_tokens instead of max_tokens
-      finalOptions.max_completion_tokens = options.maxTokens;
-      finalOptions.max_tokens = undefined;
-
-      // b) don't support streaming currently
-      finalOptions.stream = false;
-
-      // c) don't support system message
-      finalOptions.messages = finalOptions.messages?.filter(
-        (message: any) => message?.role !== "system",
-      );
-    }
 
     return finalOptions;
   }
@@ -138,7 +117,8 @@ class Yandex extends BaseLLM {
   }
 
   protected _getEndpoint(
-    endpoint: "chat/completions" | "completions" | "models",
+    // endpoint: "chat/completions" | "completions" | "models",
+    endpoint: "completion" | "chat/completions" | "completions" | "models",
   ) {
     if (this.apiType === "azure") {
       return new URL(
@@ -220,7 +200,8 @@ class Yandex extends BaseLLM {
       ...m,
       content: m.content === "" ? " " : m.content,
     })) as any;
-    const response = await this.fetch(this._getEndpoint("chat/completions"), {
+    // const response = await this.fetch(this._getEndpoint("chat/completions"), {
+    const response = await this.fetch(this._getEndpoint("completion"), {
       method: "POST",
       headers: this._getHeaders(),
       body: JSON.stringify(body),

@@ -41,6 +41,8 @@ export type RequestOptions = z.infer<typeof requestOptionsSchema>;
 export const modelDescriptionSchema = z.object({
   title: z.string(),
   provider: z.enum([
+    "giga",
+    "yandex",
     "openai",
     "anthropic",
     "cohere",

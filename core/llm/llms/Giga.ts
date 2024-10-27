@@ -27,7 +27,7 @@ class Giga extends BaseLLM {
     this.apiVersion = options.apiVersion ?? "2023-07-01-preview";
   }
 
-  static providerName: ModelProvider = "openai";
+  static providerName: ModelProvider = "giga";
   static defaultOptions: Partial<LLMOptions> = {
     apiBase: "https://gigachat.devices.sberbank.ru/api/v1/",
   };

@@ -77,9 +77,9 @@ export const models: { [key: string]: ModelPackage } = {
     isOpenSource: false,
   },
   yandexGpt: {
-    title: "yandexGpt",
+    title: "YandexGpt",
     description:
-      "An even best version of yandexGpt.",
+      "An even best version of YandexGpt.",
     params: {
       model: "yandexgpt",
       contextLength: 128_000,
@@ -92,9 +92,9 @@ export const models: { [key: string]: ModelPackage } = {
     isOpenSource: false,
   },
   yandexGptLite: {
-    title: "yandexGptLite",
+    title: "YandexGptLite",
     description:
-      "An even faster version of yandexGpt.",
+      "An even faster version of YandexGpt.",
     params: {
       model: "yandexgpt-lite",
       contextLength: 128_000,

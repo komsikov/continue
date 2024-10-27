@@ -3,6 +3,8 @@ import { z } from "zod";
 const modelDescriptionSchema = z.object({
   title: z.string(),
   provider: z.enum([
+    "giga",
+    "yandex",
     "openai",
     "anthropic",
     "cohere",

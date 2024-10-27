@@ -569,6 +569,8 @@ declare global {
     | "llama3";
 
   type ModelProvider =
+    | "giga"
+    | "yandex"
     | "openai"
     | "free-trial"
     | "anthropic"

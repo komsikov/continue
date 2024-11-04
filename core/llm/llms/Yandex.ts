@@ -8,12 +8,14 @@ import { stripImages } from "../images.js";
 import { BaseLLM } from "../index.js";
 import { streamSse } from "../stream.js";
 
-const NON_CHAT_MODELS = [""];
+const NON_CHAT_MODELS = ["yandexart"];
 
 const CHAT_ONLY_MODELS = [
   "yandexgpt-lite",
   "yandexgpt",
 ];
+
+const FOLDER_ID = "b1gelau9hstk5odp0m8r";
 
 class Yandex extends BaseLLM {
   public useLegacyCompletionsEndpoint: boolean | undefined = undefined;
@@ -68,26 +70,30 @@ class Yandex extends BaseLLM {
   protected _convertArgs(options: any, messages: ChatMessage[]) {
     const url = new URL(this.apiBase!);
     const finalOptions: any = {
+      modelUri: `gpt://${FOLDER_ID}/yandexgpt/latest`,
       messages: messages.map(this._convertMessage),
-      model: this._convertModelName(options.model),
-      max_tokens: options.maxTokens,
-      temperature: options.temperature,
-      top_p: options.topP,
-      frequency_penalty: options.frequencyPenalty,
-      presence_penalty: options.presencePenalty,
-      stream: options.stream ?? true,
-      stop:
-        // Jan + Azure OpenAI don't truncate and will throw an error
-        this.maxStopWords !== undefined
-          ? options.stop?.slice(0, this.maxStopWords)
-          : url.host === "api.deepseek.com"
-            ? options.stop?.slice(0, 16)
-            : url.port === "1337" ||
-                url.host === "api.openai.com" ||
-                url.host === "api.groq.com" ||
-                this.apiType === "azure"
-              ? options.stop?.slice(0, 4)
-              : options.stop,
+      completionOptions: {
+        maxTokens: options.maxTokens,
+        // model: this._convertModelName(options.model),
+        // max_tokens: options.maxTokens,
+        temperature: options.temperature ?? 0.3,
+        // top_p: options.topP,
+        // frequency_penalty: options.frequencyPenalty,
+        // presence_penalty: options.presencePenalty,
+        stream: options.stream ?? true,
+        // stop:
+        //   // Jan + Azure OpenAI don't truncate and will throw an error
+        //   this.maxStopWords !== undefined
+        //     ? options.stop?.slice(0, this.maxStopWords)
+        //     : url.host === "api.deepseek.com"
+        //       ? options.stop?.slice(0, 16)
+        //       : url.port === "1337" ||
+        //           url.host === "api.openai.com" ||
+        //           url.host === "api.groq.com" ||
+        //           this.apiType === "azure"
+        //         ? options.stop?.slice(0, 4)
+        //         : options.stop,
+      },
     };
 
     return finalOptions;
@@ -96,7 +102,7 @@ class Yandex extends BaseLLM {
   protected _getHeaders() {
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.apiKey}`,
+      Authorization: `api-key ${this.apiKey}`,
       "api-key": this.apiKey ?? "", // For Azure
     };
   }
@@ -198,7 +204,7 @@ class Yandex extends BaseLLM {
     // Empty messages cause an error in LM Studio
     body.messages = body.messages.map((m: any) => ({
       ...m,
-      content: m.content === "" ? " " : m.content,
+      text: m.content === "" ? " " : m.content,
     })) as any;
     // const response = await this.fetch(this._getEndpoint("chat/completions"), {
     const response = await this.fetch(this._getEndpoint("completion"), {
@@ -208,9 +214,10 @@ class Yandex extends BaseLLM {
     });
 
     // Handle non-streaming response
-    if (body.stream === false) {
+    if (body.completionOptions.stream === false) {
       const data = await response.json();
-      yield data.choices[0].message;
+      const message = data.result.alternatives[0].message;
+      yield { ...message, content: message.text };
       return;
     }
 
@@ -265,31 +272,3 @@ class Yandex extends BaseLLM {
 }
 
 export default Yandex;
-
-
-// const API_KEY = 'AQVN3grj26MOPOuAL-SM3YAFPlV2-atv4tn1fKno';
-// const FOLDER_ID = 'b1gelau9hstk5odp0m8r';
-
-
-// const res = await fetch('https://llm.api.cloud.yandex.net/foundationModels/v1/completion', {
-//   method: 'POST',
-//   headers: {
-//     Authorization: `Api-Key ${API_KEY}`,
-//   },
-//   body: JSON.stringify({
-//     modelUri: `gpt://${FOLDER_ID}/yandexgpt/latest`,
-//     completionOptions: {
-//       stream: false,
-//       temperature: 0.3,
-//       maxTokens: 2000
-//     },
-//     messages: [
-//       {
-//         role: "assistant",
-//         text: "const API_KEY ="
-//       }
-//     ]
-//   })
-// }).then(d => d.json())
-
-// console.log(res)

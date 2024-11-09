@@ -221,11 +221,22 @@ class Yandex extends BaseLLM {
       return;
     }
 
-    for await (const value of streamSse(response)) {
-      if (value.choices?.[0]?.delta?.content) {
-        yield value.choices[0].delta;
-      }
+    const stream = (ReadableStream as any).from(response.body);
+    let previewsContentData = "";
+    for await (const chunk of stream.pipeThrough(new TextDecoderStream("utf-8"))) {
+      const message = JSON.parse(chunk).result.alternatives[0].message;
+      const result = {
+          role: message.role,
+          content: message.text.slice(previewsContentData.length)
+      };
+      previewsContentData = message.text;
+      yield result;
     }
+    // for await (const value of streamSse(response)) {
+    //   if (value.choices?.[0]?.delta?.content) {
+    //     yield value.choices[0].delta;
+    //   }
+    // }
   }
 
   async *_streamFim(

@@ -128,7 +128,6 @@ class Giga extends BaseLLM {
   }
 
   protected async _getAccessToken() {
-    const AUTH_DATA = 'ZTEzYzY0OWQtYjNlYy00ZDYwLWI4NzYtZWMwZjg4OTkyMDhjOjM0NmI3ZGNjLTVkODUtNDIwNy04ODkxLWMxNDk0NTI2YjI1NQ==';
     const httpsAgent = new https.Agent({
       rejectUnauthorized: false,
     });
@@ -141,7 +140,7 @@ class Giga extends BaseLLM {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
         'RqUID': randomUUID(),
-        'Authorization': `Basic ${AUTH_DATA}`
+        'Authorization': `Basic ${this.apiKey}`
       },
       body: new URLSearchParams({ scope: 'GIGACHAT_API_PERS' }).toString(),
     }).then((d) => {
@@ -253,7 +252,6 @@ class Giga extends BaseLLM {
       content: m.content === "" ? " " : m.content,
     })) as any;
     const headers = await this._getHeaders();
-    // const response = await this.fetch(this._getEndpoint("chat/completions"), {
     const response = await this.fetch(this._getEndpoint("chat/completions"), {
       method: "POST",
       headers,

@@ -1,3 +1,6 @@
+import { randomUUID } from 'crypto';
+import https from 'https';
+import fetch from 'node-fetch';
 import {
   ChatMessage,
   CompletionOptions,
@@ -115,12 +118,39 @@ class Giga extends BaseLLM {
     return finalOptions;
   }
 
-  protected _getHeaders() {
+  protected async _getHeaders() {
+    const accessToken = await this._getAccessToken();
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${this.apiKey}`,
+      Authorization: `Bearer ${accessToken}`,
       "api-key": this.apiKey ?? "", // For Azure
     };
+  }
+
+  protected async _getAccessToken() {
+    const AUTH_DATA = 'ZTEzYzY0OWQtYjNlYy00ZDYwLWI4NzYtZWMwZjg4OTkyMDhjOjM0NmI3ZGNjLTVkODUtNDIwNy04ODkxLWMxNDk0NTI2YjI1NQ==';
+    const httpsAgent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+    console.log(process.env.NODE_TLS_REJECT_UNAUTHORIZED)
+    const responseApiKey = await fetch('https://ngw.devices.sberbank.ru:9443/api/v2/oauth', {
+      method: 'POST',
+      agent: httpsAgent,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'RqUID': randomUUID(),
+        'Authorization': `Basic ${AUTH_DATA}`
+      },
+      body: new URLSearchParams({ scope: 'GIGACHAT_API_PERS' }).toString(),
+    }).then((d) => {
+      return d.json() as Promise<{ access_token: string }>
+    }).catch((e) => {
+      console.error(e);
+    });
+
+    return responseApiKey?.access_token
   }
 
   protected async _complete(
@@ -143,7 +173,7 @@ class Giga extends BaseLLM {
   ) {
     if (this.apiType === "azure") {
       return new URL(
-        `openai/deployments/${this.engine}/${endpoint}?api-version=${this.apiVersion}`,
+        `openai/deployments/${this.deployment}/${endpoint}?api-version=${this.apiVersion}`,
         this.apiBase,
       );
     }
@@ -176,9 +206,10 @@ class Giga extends BaseLLM {
     args.prompt = prompt;
     args.messages = undefined;
 
+    const headers = await this._getHeaders();
     const response = await this.fetch(this._getEndpoint("completions"), {
       method: "POST",
-      headers: this._getHeaders(),
+      headers,
       body: JSON.stringify({
         ...args,
         stream: true,
@@ -192,7 +223,7 @@ class Giga extends BaseLLM {
     }
   }
 
-  protected async *_streamChat(
+ protected async *_streamChat(
     messages: ChatMessage[],
     options: CompletionOptions,
   ): AsyncGenerator<ChatMessage> {
@@ -221,9 +252,11 @@ class Giga extends BaseLLM {
       ...m,
       content: m.content === "" ? " " : m.content,
     })) as any;
+    const headers = await this._getHeaders();
+    // const response = await this.fetch(this._getEndpoint("chat/completions"), {
     const response = await this.fetch(this._getEndpoint("chat/completions"), {
       method: "POST",
-      headers: this._getHeaders(),
+      headers,
       body: JSON.stringify(body),
     });
 
@@ -274,9 +307,10 @@ class Giga extends BaseLLM {
   }
 
   async listModels(): Promise<string[]> {
+    const headers = await this._getHeaders();
     const response = await this.fetch(this._getEndpoint("models"), {
       method: "GET",
-      headers: this._getHeaders(),
+      headers,
     });
 
     const data = await response.json();

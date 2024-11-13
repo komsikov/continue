@@ -1,6 +1,6 @@
-import { randomUUID } from 'crypto';
-import https from 'https';
-import fetch from 'node-fetch';
+import { randomUUID } from "crypto";
+import https from "https";
+import fetch from "node-fetch";
 import {
   ChatMessage,
   CompletionOptions,
@@ -131,25 +131,28 @@ class Giga extends BaseLLM {
     const httpsAgent = new https.Agent({
       rejectUnauthorized: false,
     });
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    console.log(process.env.NODE_TLS_REJECT_UNAUTHORIZED)
-    const responseApiKey = await fetch('https://ngw.devices.sberbank.ru:9443/api/v2/oauth', {
-      method: 'POST',
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+    const responseApiKey = await fetch("https://ngw.devices.sberbank.ru:9443/api/v2/oauth", {
+      method: "POST",
       agent: httpsAgent,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'RqUID': randomUUID(),
-        'Authorization': `Basic ${this.apiKey}`
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json",
+        "RqUID": randomUUID(),
+        "Authorization": `Basic ${this.apiKey}`
       },
-      body: new URLSearchParams({ scope: 'GIGACHAT_API_PERS' }).toString(),
+      body: new URLSearchParams({ scope: "GIGACHAT_API_PERS" }).toString(),
     }).then((d) => {
-      return d.json() as Promise<{ access_token: string }>
+      return d.json() as Promise<{ access_token: string }>;
     }).catch((e) => {
       console.error(e);
     });
 
-    return responseApiKey?.access_token
+    if (!responseApiKey) {
+      throw new Error("No api key");
+    }
+
+    return responseApiKey?.access_token;
   }
 
   protected async _complete(
